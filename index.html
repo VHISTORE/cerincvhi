@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Инструкция по установке</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #121212;
+      color: #f0f0f0;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 25px;
+      background: rgba(0, 0, 0, 0.7);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1.5em;
+      color: #ff9800;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg') no-repeat center;
+      background-size: contain;
+    }
+
+    .content {
+      padding: 40px 20px;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .step-button {
+      display: block;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 18px;
+      font-size: 1.2em;
+      text-align: center;
+      color: #fff;
+      margin-bottom: 20px;
+      transition: background 0.3s;
+      cursor: pointer;
+    }
+
+    .step-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999; /* Увеличил z-index, чтобы окно было поверх всего */
+      overflow-y: auto;
+      padding: 40px 20px;
+    }
+
+    .modal-content {
+      max-width: 700px;
+      background: #1f1f1f;
+      border-radius: 16px;
+      margin: auto;
+      padding: 30px;
+      position: relative;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .close {
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      font-size: 24px;
+      color: #bbb;
+      cursor: pointer;
+    }
+
+    .step-progress {
+      font-size: 0.95em;
+      opacity: 0.8;
+      margin-bottom: 15px;
+      color: #ff9800;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      margin-bottom: 12px;
+      color: #ff9800;
+    }
+
+    p, pre {
+      line-height: 1.8;
+      margin: 8px 0;
+    }
+
+    pre {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.95em;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+    }
+
+    .nav-buttons button {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    .nav-buttons button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .help-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #ff9800;
+      color: white;
+      font-size: 24px;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.3s;
+    }
+
+    .help-btn:hover {
+      background: #e57e00;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .modal-content { padding: 18px; }
+      .nav-buttons { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"></div>
+    <h1 id="mainHeader">Инструкция по установке</h1>
+  </header>
+
+  <div class="content">
+    <div class="step-button" onclick="openModal()">Получить сертификат</div>
+    <div class="step-button" onclick="openInstallerModal()">Установщик iPA файлов</div>
+  </div>
+
+  <button class="help-btn" onclick="openModal()">?</button>
+
+  <!-- Модальное окно: Получение сертификата -->
+  <div id="modal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <span class="close" onclick="closeModal(event)">&times;</span>
+      <div class="step-progress" id="stepProgress">Шаг 1 из 2</div>
+      <div id="stepContent"></div>
+      <div class="nav-buttons">
+        <button onclick="prevStep()">← Назад</button>
+        <button onclick="nextStep()">Далее →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно: Выбор установщика -->
+  <div id="installerModal" class="modal" onclick="closeInstallerModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <span class="close" onclick="closeInstallerModal(event)">&times;</span>
+      <h2>В UDiD_Bot вам будут предложены 4 варианта установщиков — выберите свой</h2>
+      <div class="nav-buttons" style="flex-direction: column; gap: 10px; margin-top: 20px;">
+        <button onclick="openInstallerStep('esign')">ESign</button>
+        <button onclick="openInstallerStep('gbox')">GBox</button>
+        <button onclick="openInstallerStep('feather')">Feather</button>
+        <button onclick="openInstallerStep('scarlet')">Scarlet</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modal');
+    const installerModal = document.getElementById('installerModal');
+    const mainHeader = document.getElementById('mainHeader');
+    const stepContent = document.getElementById('stepContent');
+    const stepProgress = document.getElementById('stepProgress');
+    const steps = [
+      `
+      <h2>1. Получение UDiD</h2>
+      <p>1. Откройте <b>UDiD_Bot</b> и нажмите "Старт".</p>
+      <p>2. Нажмите "Получить UDiD" → "Get UDiD" → "Разрешить" → "Закрыть".</p>
+      <p>3. Перейдите в Настройки → Профиль загружен → Установить.</p>
+      <p>4. После установки вас перекинет обратно в бот с вашим UDiD:</p>
+      <pre><code>UDID: 00008101-001E5C1A36C0001E</code></pre>
+      `,
+      `
+      <h2>2. Получение сертификата</h2>
+      <p>1. Нажмите "Статус UDiD".</p>
+      <p>2. Введите ваш UDID без пробелов.</p>
+      <p>3. Подтвердите → Получите 2 файла сертификата.</p>
+      <p>4. Сохраните их на устройство.</p>
+      `
+    ];
+
+    const installerSteps = {
+      esign: `
+      <h2>ESign Инструкция</h2>
+      <p>1. Откройте приложение ESign и загрузите ваш сертификат.</p>
+      <p>2. Следуйте инструкциям на экране для установки.</p>
+      `,
+      gbox: `
+      <h2>GBox Инструкция</h2>
+      <p>1. Загрузите и установите GBox на ваше устройство.</p>
+      <p>2. Следуйте инструкциям для завершения установки.</p>
+      `,
+      feather: `
+      <h2>Feather Инструкция</h2>
+      <p>1. Скачайте и установите Feather.</p>
+      <p>2. Подключитесь и выполните инструкции по установке.</p>
+      `,
+      scarlet: `
+      <h2>Scarlet Инструкция</h2>
+      <p>1. Откройте Scarlet и следуйте шагам на экране.</p>
+      <p>2. Установите все необходимые компоненты для запуска.</p>
+      `
+    };
+
+    let currentStep = 0;
+
+    function openModal() {
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+      showStep();
+    }
+
+    function closeModal(e) {
+      if (e.target === modal || e.target.classList.contains('close')) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+
+    function openInstallerModal() {
+      installerModal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeInstallerModal(e) {
+      if (e.target === installerModal || e.target.classList.contains('close')) {
+        installerModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+
+    function showStep() {
+      stepContent.innerHTML = steps[currentStep];
+      stepProgress.textContent = `Шаг ${currentStep + 1} из ${steps.length}`;
+    }
+
+    function nextStep() {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        showStep();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        showStep();
+      }
+    }
+
+    function openInstallerStep(installer) {
+      stepContent.innerHTML = installerSteps[installer];
+      stepProgress.textContent = `Установка ${installer.charAt(0).toUpperCase() + installer.slice(1)}`;
+    }
+  </script>
+</body>
+</html>
+
